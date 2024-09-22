@@ -1,26 +1,25 @@
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 
+using CardZoneCashbackManagementSystem.Database;
 using CardZoneCashbackManagementSystem.Models;
 using CardZoneCashbackManagementSystem.Repositories;
-using CardZoneCashbackManagementSystem.UnitTests.Fixtures;
 
 namespace CardZoneCashbackManagementSystem.UnitTests.Repositories;
 
-public class CardRepositoryTests : IClassFixture<DatabaseFixture>, IDisposable
+public class CardRepositoryTests
 {
-    private readonly DatabaseFixture _fixture;
+    private readonly AppDbContext _dbContext;
 
     
-    public CardRepositoryTests(DatabaseFixture fixture)
+    public CardRepositoryTests()
     {
-        _fixture = fixture;
-    }
-    
-    
-    public void Dispose()
-    {
-        _fixture.Dispose();
+        DbContextOptions<AppDbContext> options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        
+        _dbContext = new AppDbContext(options);
     }
 
     
@@ -28,11 +27,10 @@ public class CardRepositoryTests : IClassFixture<DatabaseFixture>, IDisposable
     public async Task GetCardsAsync_ReturnsAllCards(List<Card> cards)
     {
         // Arrange
-        await using var context = _fixture.CreateContext();
-        var repository = new CardRepository(context);
+        var repository = new CardRepository(_dbContext);
 
-        await context.Cards.AddRangeAsync(cards);
-        await context.SaveChangesAsync();
+        await _dbContext.Cards.AddRangeAsync(cards);
+        await _dbContext.SaveChangesAsync();
 
         // Act
         var result = await repository.GetCardsAsync();
@@ -45,11 +43,10 @@ public class CardRepositoryTests : IClassFixture<DatabaseFixture>, IDisposable
     public async Task GetCardByIdAsync_WhenCardExists_ReturnsCard(Card card)
     {
         // Arrange
-        await using var context = _fixture.CreateContext();
-        var repository = new CardRepository(context);
+        var repository = new CardRepository(_dbContext);
 
-        await context.Cards.AddAsync(card);
-        await context.SaveChangesAsync();
+        await _dbContext.Cards.AddAsync(card);
+        await _dbContext.SaveChangesAsync();
 
         // Act
         var result = await repository.GetCardByIdAsync(card.Id);
@@ -63,14 +60,13 @@ public class CardRepositoryTests : IClassFixture<DatabaseFixture>, IDisposable
     public async Task AddCardAsync_AddsCard(Card card)
     {
         // Arrange
-        await using var context = _fixture.CreateContext();
-        var repository = new CardRepository(context);
+        var repository = new CardRepository(_dbContext);
 
         // Act
         await repository.AddCardAsync(card);
 
         // Assert
-        var savedCard = await context.Cards.FindAsync(card.Id);
+        var savedCard = await _dbContext.Cards.FindAsync(card.Id);
         savedCard.Should().NotBeNull();
         savedCard!.Pan.Should().Be(card.Pan);
     }
@@ -79,18 +75,17 @@ public class CardRepositoryTests : IClassFixture<DatabaseFixture>, IDisposable
     public async Task DeleteCardByIdAsync_WhenCardExists_DeletesCard(Card card)
     {
         // Arrange
-        await using var context = _fixture.CreateContext();
-        var repository = new CardRepository(context);
+        var repository = new CardRepository(_dbContext);
 
-        await context.Cards.AddAsync(card);
-        await context.SaveChangesAsync();
+        await _dbContext.Cards.AddAsync(card);
+        await _dbContext.SaveChangesAsync();
 
         // Act
         var result = await repository.DeleteCardByIdAsync(card.Id);
 
         // Assert
         result.Should().BeTrue();
-        var deletedCard = await context.Cards.FindAsync(card.Id);
+        var deletedCard = await _dbContext.Cards.FindAsync(card.Id);
         deletedCard.Should().BeNull();
     }
 
@@ -98,8 +93,7 @@ public class CardRepositoryTests : IClassFixture<DatabaseFixture>, IDisposable
     public async Task DeleteCardByIdAsync_WhenCardDoesNotExist_ReturnsFalse(long id)
     {
         // Arrange
-        await using var context = _fixture.CreateContext();
-        var repository = new CardRepository(context);
+        var repository = new CardRepository(_dbContext);
 
         // Act
         var result = await repository.DeleteCardByIdAsync(id);
