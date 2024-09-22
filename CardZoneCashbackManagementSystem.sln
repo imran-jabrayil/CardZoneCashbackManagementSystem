@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardZoneCashbackManagementSystem", "CardZoneCashbackManagementSystem\CardZoneCashbackManagementSystem.csproj", "{4BD97841-C40A-4A7B-9C96-9D212BB67973}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardZoneCashbackManagementSystem.UnitTests", "CardZoneCashbackManagementSystem.UnitTests\CardZoneCashbackManagementSystem.UnitTests.csproj", "{8139979F-7709-43FB-9F01-A0DA5B8E0EFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{4BD97841-C40A-4A7B-9C96-9D212BB67973}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BD97841-C40A-4A7B-9C96-9D212BB67973}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BD97841-C40A-4A7B-9C96-9D212BB67973}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8139979F-7709-43FB-9F01-A0DA5B8E0EFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8139979F-7709-43FB-9F01-A0DA5B8E0EFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8139979F-7709-43FB-9F01-A0DA5B8E0EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8139979F-7709-43FB-9F01-A0DA5B8E0EFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
