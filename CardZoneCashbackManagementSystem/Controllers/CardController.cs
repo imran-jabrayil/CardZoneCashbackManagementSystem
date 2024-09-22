@@ -1,12 +1,9 @@
 using AutoMapper;
 using CardZoneCashbackManagementSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-
 using CardZoneCashbackManagementSystem.Models.Requests;
 using CardZoneCashbackManagementSystem.Models.Validators;
-using CardZoneCashbackManagementSystem.Repositories.Abstractions;
 using CardZoneCashbackManagementSystem.Services.Abstractions;
-
+using Microsoft.AspNetCore.Mvc;
 
 namespace CardZoneCashbackManagementSystem.Controllers;
 
@@ -14,16 +11,19 @@ namespace CardZoneCashbackManagementSystem.Controllers;
 [Route("/api/")]
 public class CardController : ControllerBase
 {
+    private readonly ILogger<CardController> _logger;
     private readonly ICardService _cardService;
     private readonly CreateCardRequestValidator _createCardRequestValidator;
     private readonly IMapper _mapper;
-    
-    
+
+
     public CardController(
-        ICardService cardService, 
-        CreateCardRequestValidator createCardRequestValidator, 
+        ILogger<CardController> logger,
+        ICardService cardService,
+        CreateCardRequestValidator createCardRequestValidator,
         IMapper mapper)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _cardService = cardService ?? throw new ArgumentNullException(nameof(cardService));
         _createCardRequestValidator = createCardRequestValidator ??
                                       throw new ArgumentNullException(nameof(createCardRequestValidator));
@@ -36,6 +36,7 @@ public class CardController : ControllerBase
     public async Task<IActionResult> GetCards()
     {
         var cards = await _cardService.GetCardsAsync();
+        _logger.LogInformation("cards retrieved with count {Count}", cards.Count);
         return Ok(cards);
     }
 
@@ -45,9 +46,14 @@ public class CardController : ControllerBase
     {
         var card = await _cardService.GetCardByIdAsync(id);
 
-        return card is not null
-            ? Ok(card)
-            : NotFound();
+        if (card is null)
+        {
+            _logger.LogInformation("card with id {Id} not found", id);
+            return NotFound();
+        }
+
+        _logger.LogInformation("card retrieved with id {Id}", card.Id);
+        return Ok();
     }
 
     [HttpPost]
@@ -57,11 +63,16 @@ public class CardController : ControllerBase
         var validationResult = await _createCardRequestValidator.ValidateAsync(request);
 
         if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors.First().ErrorMessage);
+        {
+            var errorMessage = validationResult.Errors.First().ErrorMessage;
+            _logger.LogError("invalid request: {ErrorMessage}", errorMessage);
+            return BadRequest(errorMessage);
+        }
 
         var card = _mapper.Map<Card>(request);
 
         await _cardService.AddCardAsync(card);
+        _logger.LogInformation("card added with id {Id}", card.Id);
         return Ok();
     }
 
@@ -69,8 +80,15 @@ public class CardController : ControllerBase
     [Route("cards/{id}")]
     public async Task<IActionResult> DeleteCard(long id)
     {
-        return await _cardService.DeleteCardByIdAsync(id)
-            ? Ok()
-            : NotFound();
+        var result = await _cardService.DeleteCardByIdAsync(id);
+
+        if (result is false)
+        {
+            _logger.LogInformation("card with id {Id} not found for deletion", id);
+            return NotFound();
+        }
+
+        _logger.LogInformation("deleted card with id {Id}", id);
+        return Ok();
     }
 }

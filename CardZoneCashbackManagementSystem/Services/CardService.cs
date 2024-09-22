@@ -11,7 +11,7 @@ public class CardService : ICardService
     
     public CardService(ICardRepository cardRepository)
     {
-        _cardRepository = cardRepository;
+        _cardRepository = cardRepository ?? throw new ArgumentNullException(nameof(cardRepository));
     }
 
     

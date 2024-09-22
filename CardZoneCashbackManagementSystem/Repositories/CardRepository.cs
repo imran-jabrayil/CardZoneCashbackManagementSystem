@@ -12,7 +12,7 @@ public class CardRepository : ICardRepository
     
     public CardRepository(AppDbContext dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
 
