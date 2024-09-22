@@ -1,0 +1,6 @@
+@CardZoneCashbackManagementSystem_HostAddress = http://localhost:5096
+
+GET {{CardZoneCashbackManagementSystem_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
