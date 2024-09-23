@@ -3,13 +3,12 @@ using CardZoneCashbackManagementSystem.Models;
 using CardZoneCashbackManagementSystem.Repositories.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace CardZoneCashbackManagementSystem.Repositories;
 
 public class CardRepository : ICardRepository
 {
     private readonly AppDbContext _dbContext;
-    
+
     public CardRepository(AppDbContext dbContext)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
@@ -29,7 +28,6 @@ public class CardRepository : ICardRepository
     public async Task AddCardAsync(Card card)
     {
         await _dbContext.Cards.AddAsync(card);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteCardByIdAsync(long id)
@@ -38,7 +36,6 @@ public class CardRepository : ICardRepository
         if (card is null) return false;
 
         _dbContext.Cards.Remove(card);
-        await _dbContext.SaveChangesAsync();
         return true;
     }
 }

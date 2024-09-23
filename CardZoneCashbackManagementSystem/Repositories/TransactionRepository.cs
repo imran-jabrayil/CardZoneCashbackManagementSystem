@@ -41,7 +41,6 @@ public class TransactionRepository : ITransactionRepository
     public async Task AddTransactionAsync(Transaction transaction)
     {
         await _dbContext.Transactions.AddAsync(transaction);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteTransactionByIdAsync(long id)
@@ -50,7 +49,6 @@ public class TransactionRepository : ITransactionRepository
         if (transaction is null) return false;
 
         _dbContext.Transactions.Remove(transaction);
-        await _dbContext.SaveChangesAsync();
         return true;
     }
 }

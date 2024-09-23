@@ -6,32 +6,35 @@ namespace CardZoneCashbackManagementSystem.Services;
 
 public class CardService : ICardService
 {
-    private readonly ICardRepository _cardRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     
-    public CardService(ICardRepository cardRepository)
+    public CardService(IUnitOfWork unitOfWork)
     {
-        _cardRepository = cardRepository ?? throw new ArgumentNullException(nameof(cardRepository));
+        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
     
     public async Task<ICollection<Card>> GetCardsAsync()
     {
-        return await _cardRepository.GetCardsAsync();
+        return await _unitOfWork.CardRepository.GetCardsAsync();
     }
 
     public async Task<Card?> GetCardByIdAsync(long id)
     {
-        return await _cardRepository.GetCardByIdAsync(id);
+        return await _unitOfWork.CardRepository.GetCardByIdAsync(id);
     }
 
     public async Task AddCardAsync(Card card)
     {
-        await _cardRepository.AddCardAsync(card);
+        await _unitOfWork.CardRepository.AddCardAsync(card);
+        await _unitOfWork.SaveAsync();
     }
 
     public async Task<bool> DeleteCardByIdAsync(long id)
     {
-        return await _cardRepository.DeleteCardByIdAsync(id);
+        var result = await _unitOfWork.CardRepository.DeleteCardByIdAsync(id);
+        await _unitOfWork.SaveAsync();
+        return result;
     }
 }

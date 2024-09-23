@@ -9,49 +9,51 @@ namespace CardZoneCashbackManagementSystem.Services;
 public class TransactionService : ITransactionService
 {
     private readonly ILogger<TransactionService> _logger;
-    private readonly ITransactionRepository _transactionRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ICashbackClient _cashbackClient;
 
 
     public TransactionService(
         ILogger<TransactionService> logger,
-        ITransactionRepository transactionRepository,
+        IUnitOfWork unitOfWork,
         ICashbackClient cashbackClient)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _transactionRepository =
-            transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
+        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _cashbackClient = cashbackClient ?? throw new ArgumentNullException(nameof(cashbackClient));
     }
 
     public async Task<ICollection<Transaction>> GetTransactionsAsync()
     {
-        return await _transactionRepository.GetTransactionsAsync();
+        return await _unitOfWork.TransactionRepository.GetTransactionsAsync();
     }
 
     public async Task<ICollection<Transaction>> GetTransactionsAsync(DateTime from)
     {
-        return await _transactionRepository.GetTransactionsAsync(from);
+        return await _unitOfWork.TransactionRepository.GetTransactionsAsync(from);
     }
 
     public async Task<ICollection<Transaction>> GetTransactionsAsync(DateTime from, DateTime to)
     {
-        return await _transactionRepository.GetTransactionsAsync(from, to);
+        return await _unitOfWork.TransactionRepository.GetTransactionsAsync(from, to);
     }
 
     public async Task<Transaction?> GetTransactionByIdAsync(long id)
     {
-        return await _transactionRepository.GetTransactionByIdAsync(id);
+        return await _unitOfWork.TransactionRepository.GetTransactionByIdAsync(id);
     }
 
     public async Task AddTransactionAsync(Transaction transaction)
     {
-        await _transactionRepository.AddTransactionAsync(transaction);
+        await _unitOfWork.TransactionRepository.AddTransactionAsync(transaction);
+        await _unitOfWork.SaveAsync();
     }
 
     public async Task<bool> DeleteTransactionByIdAsync(long id)
     {
-        return await _transactionRepository.DeleteTransactionByIdAsync(id);
+        var result = await _unitOfWork.TransactionRepository.DeleteTransactionByIdAsync(id);
+        await _unitOfWork.SaveAsync();
+        return result;
     }
 
     public async Task<decimal?> CalculateCashback(Transaction transaction, bool shouldCreditAccount = false)
@@ -64,7 +66,7 @@ public class TransactionService : ITransactionService
         }
 
         if (shouldCreditAccount)
-            await _transactionRepository.AddTransactionAsync(new Transaction
+            await _unitOfWork.TransactionRepository.AddTransactionAsync(new Transaction
             {
                 Amount = cashbackAmount.Value,
                 CardId = transaction.CardId,

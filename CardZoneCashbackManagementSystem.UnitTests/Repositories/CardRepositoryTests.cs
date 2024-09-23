@@ -87,6 +87,7 @@ public class CardRepositoryTests
 
         // Act
         var result = await repository.DeleteCardByIdAsync(card.Id);
+        await _dbContext.SaveChangesAsync();
 
         // Assert
         result.Should().BeTrue();

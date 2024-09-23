@@ -103,6 +103,7 @@ public class TransactionRepositoryTests
 
         // Act
         await repository.AddTransactionAsync(transaction);
+        await _dbContext.SaveChangesAsync();
 
         // Assert
         var savedTransaction = await _dbContext.Transactions.FindAsync(transaction.Id);
@@ -125,6 +126,7 @@ public class TransactionRepositoryTests
 
         // Act
         var result = await repository.DeleteTransactionByIdAsync(transaction.Id);
+        await _dbContext.SaveChangesAsync();
 
         // Assert
         result.Should().BeTrue();
