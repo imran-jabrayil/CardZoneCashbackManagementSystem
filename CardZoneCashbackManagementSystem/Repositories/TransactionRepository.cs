@@ -30,6 +30,7 @@ public class TransactionRepository : ITransactionRepository
     {
         return await _dbContext.Transactions
             .Where(tx => tx.CreatedAt >= from && tx.CreatedAt < to)
+            .Include(tx => tx.Card)
             .ToListAsync();
     }
 

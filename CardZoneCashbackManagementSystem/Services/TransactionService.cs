@@ -45,6 +45,16 @@ public class TransactionService : ITransactionService
 
     public async Task AddTransactionAsync(Transaction transaction)
     {
+        var card = await _unitOfWork.CardRepository.GetCardByIdAsync(transaction.CardId);
+        if (card is null)
+        {
+            _logger.LogError("card with id {Id} not found", transaction.CardId);
+            return;
+        }
+
+        var changedAmount = transaction.Type == TransactionTypes.Credit ? transaction.Amount : -transaction.Amount;
+        card.Balance += changedAmount;
+
         await _unitOfWork.TransactionRepository.AddTransactionAsync(transaction);
         await _unitOfWork.SaveAsync();
     }
