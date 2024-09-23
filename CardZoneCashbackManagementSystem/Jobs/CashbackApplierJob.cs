@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Globalization;
 using CardZoneCashbackManagementSystem.Services.Abstractions;
 using Quartz;
 
@@ -9,27 +8,47 @@ public class CashbackApplierJob : IJob
 {
     private readonly ILogger<CashbackApplierJob> _logger;
     private readonly ITransactionService _transactionService;
+    private readonly IJobStateService _jobStateService;
 
 
     public CashbackApplierJob(
         ILogger<CashbackApplierJob> logger,
-        ITransactionService transactionService)
+        ITransactionService transactionService,
+        IJobStateService jobStateService)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _transactionService = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
+        _jobStateService = jobStateService ?? throw new ArgumentNullException(nameof(jobStateService));
     }
 
     public async Task Execute(IJobExecutionContext context)
     {
         var sw = Stopwatch.StartNew();
-        _logger.LogInformation("Started execution {Time}", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+        _logger.LogInformation("started execution");
 
-        var transactions = await _transactionService.GetTransactionsAsync(DateTime.Today.AddDays(-1), DateTime.Today);
+        var jobState = await _jobStateService.GetJobState(nameof(CashbackApplierJob));
+        var today = DateTime.Today;
+        var startDay = jobState?.LastExecutionDay.AddDays(1) ?? today;
+
+        for (var day = startDay; day <= today; day = day.AddDays(1)) await processTransactions(day);
+
+        await _jobStateService.UpdateJobState(nameof(CashbackApplierJob), today);
+
+        sw.Stop();
+        _logger.LogInformation("Finished execution. Elapsed ms: {ElapsedMs}", sw.Elapsed.TotalMilliseconds);
+    }
+
+
+    private async Task processTransactions(DateTime day)
+    {
+        _logger.LogInformation("started processing day {Day}", day.ToShortDateString());
+
+        var transactions = await _transactionService.GetTransactionsAsync(day.AddDays(-1), day);
 
         foreach (var transaction in transactions)
         {
             if (transaction.HasCashback is false) continue;
-            
+
             var cashbackAmount =
                 await _transactionService.CalculateCashback(transaction, true);
 
@@ -38,7 +57,6 @@ public class CashbackApplierJob : IJob
                     transaction.CardId, cashbackAmount.Value);
         }
 
-        sw.Stop();
-        _logger.LogInformation("Finished execution. Elapsed ms: {ElapsedMs}", sw.Elapsed.TotalMilliseconds);
+        _logger.LogInformation("finished processing day {Day}", day.ToShortDateString());
     }
 }

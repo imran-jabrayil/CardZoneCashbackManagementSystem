@@ -58,19 +58,19 @@ public class TransactionService : ITransactionService
         await _unitOfWork.TransactionRepository.AddTransactionAsync(transaction);
         await _unitOfWork.SaveAsync();
     }
-    
+
     public async Task<decimal?> CalculateCashback(Transaction transaction, bool shouldCreditAccount = false)
     {
         var cashbackAmount = await _cashbackClient.GetCashbackAmountAsync(transaction.Amount);
-        if (cashbackAmount is null)
+        
+        if (cashbackAmount.HasValue is false)
         {
             _logger.LogWarning("Could not receive cashback amount for transaction with id {Id}", transaction.Id);
             return cashbackAmount;
         }
 
         if (shouldCreditAccount)
-        {
-            await this.AddTransactionAsync(new Transaction
+            await AddTransactionAsync(new Transaction
             {
                 Amount = cashbackAmount.Value,
                 CardId = transaction.CardId,
@@ -78,7 +78,6 @@ public class TransactionService : ITransactionService
                 HasCashback = false,
                 Type = TransactionTypes.Credit
             });
-        }
 
         return cashbackAmount;
     }
