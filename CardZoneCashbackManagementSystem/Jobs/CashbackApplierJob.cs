@@ -28,6 +28,8 @@ public class CashbackApplierJob : IJob
 
         foreach (var transaction in transactions)
         {
+            if (transaction.HasCashback is false) continue;
+            
             var cashbackAmount =
                 await _transactionService.CalculateCashback(transaction, true);
 
