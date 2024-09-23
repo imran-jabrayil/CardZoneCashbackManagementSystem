@@ -9,6 +9,5 @@ public interface ITransactionService
     Task<ICollection<Transaction>> GetTransactionsAsync(DateTime from, DateTime to);
     Task<Transaction?> GetTransactionByIdAsync(long id);
     Task AddTransactionAsync(Transaction transaction);
-    Task<bool> DeleteTransactionByIdAsync(long id);
     Task<decimal?> CalculateCashback(Transaction transaction, bool shouldCreditAccount = false);
 }

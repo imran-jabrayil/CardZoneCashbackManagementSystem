@@ -58,14 +58,7 @@ public class TransactionService : ITransactionService
         await _unitOfWork.TransactionRepository.AddTransactionAsync(transaction);
         await _unitOfWork.SaveAsync();
     }
-
-    public async Task<bool> DeleteTransactionByIdAsync(long id)
-    {
-        var result = await _unitOfWork.TransactionRepository.DeleteTransactionByIdAsync(id);
-        await _unitOfWork.SaveAsync();
-        return result;
-    }
-
+    
     public async Task<decimal?> CalculateCashback(Transaction transaction, bool shouldCreditAccount = false)
     {
         var cashbackAmount = await _cashbackClient.GetCashbackAmountAsync(transaction.Amount);
