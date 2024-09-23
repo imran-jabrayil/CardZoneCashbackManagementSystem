@@ -70,7 +70,7 @@ public class TransactionService : ITransactionService
 
         if (shouldCreditAccount)
         {
-            await _unitOfWork.TransactionRepository.AddTransactionAsync(new Transaction
+            await this.AddTransactionAsync(new Transaction
             {
                 Amount = cashbackAmount.Value,
                 CardId = transaction.CardId,
@@ -78,9 +78,7 @@ public class TransactionService : ITransactionService
                 HasCashback = false,
                 Type = TransactionTypes.Credit
             });
-            await _unitOfWork.SaveAsync();
         }
-            
 
         return cashbackAmount;
     }
