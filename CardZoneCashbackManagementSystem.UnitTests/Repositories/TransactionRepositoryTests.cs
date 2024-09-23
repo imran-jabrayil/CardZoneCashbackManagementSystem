@@ -41,7 +41,7 @@ public class TransactionRepositoryTests
 
     [Theory]
     [AutoData]
-    public async Task GetTransactionsAsync_ReturnsTransactions(List<Transaction> transactions)
+    public async Task GetTransactionsAsync_WithValidFromDate_ReturnsTransactions(List<Transaction> transactions)
     {
         // Arrange
         var from = transactions.Max(tx => tx.CreatedAt);
@@ -52,6 +52,25 @@ public class TransactionRepositoryTests
 
         // Act
         var result = await repository.GetTransactionsAsync(from);
+
+        // Assert
+        result.Should().HaveCount(1);
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task GetTransactionsAsync_WithValidFromAndToDate_ReturnsTransactions(List<Transaction> transactions)
+    {
+        // Arrange
+        var from = transactions.Max(tx => tx.CreatedAt);
+        var to = from.AddSeconds(1);
+        var repository = new TransactionRepository(_dbContext);
+
+        await _dbContext.Transactions.AddRangeAsync(transactions);
+        await _dbContext.SaveChangesAsync();
+
+        // Act
+        var result = await repository.GetTransactionsAsync(from, to);
 
         // Assert
         result.Should().HaveCount(1);

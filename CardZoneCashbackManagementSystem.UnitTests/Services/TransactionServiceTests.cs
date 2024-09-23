@@ -128,4 +128,33 @@ public class TransactionServiceTests
         result.Should().HaveCount(transactions.Count(t => t.CreatedAt >= from));
         transactionRepository.Verify(r => r.GetTransactionsAsync(from), Times.Once());
     }
+
+    [Theory]
+    [AutoData]
+    public async Task GetTransactionsAsync_WithValidFromAndToDate_ReturnsFilteredTransactions(
+        List<Transaction> transactions,
+        Mock<ILogger<TransactionService>> logger,
+        Mock<ICashbackClient> cashbackClient,
+        Mock<ITransactionRepository> transactionRepository)
+    {
+        // Arrange
+        var from = transactions.Max(tx => tx.CreatedAt);
+        var to = from.AddSeconds(1);
+
+        // Simulate the behavior of the repository
+        transactionRepository.Setup(r => r.GetTransactionsAsync(from, to))
+            .ReturnsAsync(transactions.Where(t => t.CreatedAt >= from && t.CreatedAt < to).ToList())
+            .Verifiable();
+
+        var sut = new TransactionService(logger.Object,
+            transactionRepository.Object,
+            cashbackClient.Object);
+
+        // Act
+        var result = await sut.GetTransactionsAsync(from, to);
+
+        // Assert
+        result.Should().HaveCount(transactions.Count(t => t.CreatedAt >= from));
+        transactionRepository.Verify(r => r.GetTransactionsAsync(from, to), Times.Once());
+    }
 }
