@@ -1,10 +1,9 @@
 using AutoFixture.Xunit2;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-
 using CardZoneCashbackManagementSystem.Database;
 using CardZoneCashbackManagementSystem.Models;
 using CardZoneCashbackManagementSystem.Repositories;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CardZoneCashbackManagementSystem.UnitTests.Repositories;
 
@@ -12,18 +11,19 @@ public class CardRepositoryTests
 {
     private readonly AppDbContext _dbContext;
 
-    
+
     public CardRepositoryTests()
     {
-        DbContextOptions<AppDbContext> options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
-        
+
         _dbContext = new AppDbContext(options);
     }
 
-    
-    [Theory, AutoData]
+
+    [Theory]
+    [AutoData]
     public async Task GetCardsAsync_ReturnsAllCards(List<Card> cards)
     {
         // Arrange
@@ -39,7 +39,8 @@ public class CardRepositoryTests
         result.Should().HaveCount(cards.Count);
     }
 
-    [Theory, AutoData]
+    [Theory]
+    [AutoData]
     public async Task GetCardByIdAsync_WhenCardExists_ReturnsCard(Card card)
     {
         // Arrange
@@ -56,7 +57,8 @@ public class CardRepositoryTests
         result!.Id.Should().Be(card.Id);
     }
 
-    [Theory, AutoData]
+    [Theory]
+    [AutoData]
     public async Task AddCardAsync_AddsCard(Card card)
     {
         // Arrange
@@ -69,9 +71,12 @@ public class CardRepositoryTests
         var savedCard = await _dbContext.Cards.FindAsync(card.Id);
         savedCard.Should().NotBeNull();
         savedCard!.Pan.Should().Be(card.Pan);
+        savedCard.Balance.Should().Be(card.Balance);
+        savedCard.CustomerId.Should().Be(card.CustomerId);
     }
 
-    [Theory, AutoData]
+    [Theory]
+    [AutoData]
     public async Task DeleteCardByIdAsync_WhenCardExists_DeletesCard(Card card)
     {
         // Arrange
@@ -89,7 +94,8 @@ public class CardRepositoryTests
         deletedCard.Should().BeNull();
     }
 
-    [Theory, AutoData]
+    [Theory]
+    [AutoData]
     public async Task DeleteCardByIdAsync_WhenCardDoesNotExist_ReturnsFalse(long id)
     {
         // Arrange

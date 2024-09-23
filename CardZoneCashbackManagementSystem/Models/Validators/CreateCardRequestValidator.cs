@@ -1,7 +1,6 @@
-using FluentValidation;
-
 using CardZoneCashbackManagementSystem.Models.Requests;
-
+using CardZoneCashbackManagementSystem.Utils;
+using FluentValidation;
 
 namespace CardZoneCashbackManagementSystem.Models.Validators;
 
@@ -9,11 +8,12 @@ public class CreateCardRequestValidator : AbstractValidator<CreateCardRequest>
 {
     public CreateCardRequestValidator()
     {
-        base.RuleFor(ccr => ccr.Pan)
+        RuleFor(ccr => ccr.Pan)
             .Length(16)
-            .Must(pan => pan.All(char.IsDigit));
+            .Must(pan => pan.All(char.IsDigit))
+            .Must(CardUtils.ValidateLuhn);
 
-        base.RuleFor(ccr => ccr.CustomerId)
+        RuleFor(ccr => ccr.CustomerId)
             .MaximumLength(100);
     }
 }

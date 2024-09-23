@@ -1,14 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-
+using System.Reflection;
 using CardZoneCashbackManagementSystem.Database;
 using CardZoneCashbackManagementSystem.Mappers;
-using CardZoneCashbackManagementSystem.Models.Validators;
 using CardZoneCashbackManagementSystem.Repositories;
 using CardZoneCashbackManagementSystem.Repositories.Abstractions;
 using CardZoneCashbackManagementSystem.Services;
 using CardZoneCashbackManagementSystem.Services.Abstractions;
 using FluentValidation;
-
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +21,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<ICardService, CardService>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateCardRequestValidator>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
