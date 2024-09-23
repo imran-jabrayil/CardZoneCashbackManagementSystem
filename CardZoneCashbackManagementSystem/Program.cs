@@ -39,12 +39,14 @@ builder.Services.AddQuartz(q =>
     var jobKey = new JobKey(nameof(CashbackApplierJob));
     q.AddJob<CashbackApplierJob>(opts => opts.WithIdentity(jobKey));
 
-    var cronSchedule = builder.Configuration["Jobs:MyJob:CronSchedule"];
+    var cronSchedule = builder.Configuration[$"Jobs:{nameof(CashbackApplierJob)}:CronSchedule"];
     q.AddTrigger(opts => opts
         .ForJob(jobKey)
         .WithIdentity($"{nameof(CashbackApplierJob)}Trigger")
         .WithCronSchedule(cronSchedule ?? throw new NullReferenceException(nameof(cronSchedule))));
 });
+
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 var app = builder.Build();
 

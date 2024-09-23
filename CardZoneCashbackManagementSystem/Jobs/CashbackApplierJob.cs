@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using CardZoneCashbackManagementSystem.Services.Abstractions;
 using Quartz;
@@ -20,6 +21,7 @@ public class CashbackApplierJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
+        var sw = Stopwatch.StartNew();
         _logger.LogInformation("Started execution {Time}", DateTime.Now.ToString(CultureInfo.InvariantCulture));
 
         var transactions = await _transactionService.GetTransactionsAsync(DateTime.Today.AddDays(-1), DateTime.Today);
@@ -33,5 +35,8 @@ public class CashbackApplierJob : IJob
                 _logger.LogInformation("Credited card with id {CardId} with cashback amount {CashbackAmount}",
                     transaction.CardId, cashbackAmount.Value);
         }
+
+        sw.Stop();
+        _logger.LogInformation("Finished execution. Elapsed ms: {ElapsedMs}", sw.Elapsed.TotalMilliseconds);
     }
 }
