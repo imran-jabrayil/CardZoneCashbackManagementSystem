@@ -1,3 +1,4 @@
+using CardZoneCashbackManagementSystem.Clients.Abstractions;
 using CardZoneCashbackManagementSystem.Clients.Settings;
 using CardZoneCashbackManagementSystem.Models.Responses;
 using Microsoft.Extensions.Options;
@@ -5,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace CardZoneCashbackManagementSystem.Clients;
 
-public class CashbackClient
+public class CashbackClient : ICashbackClient
 {
     private readonly HttpClient _httpClient;
     private readonly CashbackClientSettings _settings;
@@ -20,7 +21,7 @@ public class CashbackClient
     }
 
 
-    public async Task<decimal?> GetCashbackAmountAsync(double transactionAmount)
+    public async Task<decimal?> GetCashbackAmountAsync(decimal transactionAmount)
     {
         var requestUri = $"{_settings.ApiUrl}?transactionAmount={transactionAmount}";
 

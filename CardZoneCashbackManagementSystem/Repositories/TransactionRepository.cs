@@ -26,6 +26,13 @@ public class TransactionRepository : ITransactionRepository
             .ToListAsync();
     }
 
+    public async Task<ICollection<Transaction>> GetTransactionsAsync(DateTime from, DateTime to)
+    {
+        return await _dbContext.Transactions
+            .Where(tx => tx.CreatedAt >= from && tx.CreatedAt < to)
+            .ToListAsync();
+    }
+
     public async Task<Transaction?> GetTransactionByIdAsync(long id)
     {
         return await _dbContext.Transactions.FirstOrDefaultAsync(c => c.Id == id);

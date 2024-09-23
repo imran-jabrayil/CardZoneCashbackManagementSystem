@@ -2,11 +2,8 @@ using AutoFixture.Xunit2;
 using CardZoneCashbackManagementSystem.Database;
 using CardZoneCashbackManagementSystem.Models;
 using CardZoneCashbackManagementSystem.Repositories;
-using CardZoneCashbackManagementSystem.Repositories.Abstractions;
-using CardZoneCashbackManagementSystem.Services;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace CardZoneCashbackManagementSystem.UnitTests.Repositories;
 
@@ -58,30 +55,6 @@ public class TransactionRepositoryTests
 
         // Assert
         result.Should().HaveCount(1);
-    }
-
-    [Theory]
-    [AutoData]
-    public async Task GetTransactionsAsync_WithValidFromDate_ReturnsFilteredTransactions(
-        List<Transaction> transactions,
-        Mock<ITransactionRepository> repository)
-    {
-        // Arrange
-        var from = transactions.Max(tx => tx.CreatedAt);
-
-        // Simulate the behavior of the repository
-        repository.Setup(r => r.GetTransactionsAsync(from))
-            .ReturnsAsync(transactions.Where(t => t.CreatedAt >= from).ToList())
-            .Verifiable();
-
-        var sut = new TransactionService(repository.Object);
-
-        // Act
-        var result = await sut.GetTransactionsAsync(from);
-
-        // Assert
-        result.Should().HaveCount(transactions.Count(t => t.CreatedAt >= from));
-        repository.Verify(r => r.GetTransactionsAsync(from), Times.Once());
     }
 
     [Theory]

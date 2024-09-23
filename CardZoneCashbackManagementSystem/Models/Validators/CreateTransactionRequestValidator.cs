@@ -1,3 +1,4 @@
+using CardZoneCashbackManagementSystem.Constants;
 using CardZoneCashbackManagementSystem.Models.Requests;
 using FluentValidation;
 
@@ -11,6 +12,6 @@ public class CreateTransactionRequestValidator : AbstractValidator<CreateTransac
             .GreaterThan(0);
 
         RuleFor(tx => tx.Type)
-            .Must(type => type == "DEBIT" || type == "CREDIT");
+            .Must(type => type == TransactionTypes.Credit || type == TransactionTypes.Debit);
     }
 }
