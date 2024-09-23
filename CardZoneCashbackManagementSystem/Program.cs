@@ -1,4 +1,6 @@
 using System.Reflection;
+using CardZoneCashbackManagementSystem.Clients;
+using CardZoneCashbackManagementSystem.Clients.Settings;
 using CardZoneCashbackManagementSystem.Database;
 using CardZoneCashbackManagementSystem.Mappers;
 using CardZoneCashbackManagementSystem.Repositories;
@@ -24,6 +26,8 @@ builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddHttpClient<CashbackClient>();
+builder.Services.Configure<CashbackClientSettings>(builder.Configuration.GetSection(nameof(CashbackClient)));
 
 var app = builder.Build();
 
