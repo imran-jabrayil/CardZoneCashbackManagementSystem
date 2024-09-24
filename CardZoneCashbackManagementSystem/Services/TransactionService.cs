@@ -1,5 +1,6 @@
 using CardZoneCashbackManagementSystem.Clients.Abstractions;
 using CardZoneCashbackManagementSystem.Constants;
+using CardZoneCashbackManagementSystem.Exceptions;
 using CardZoneCashbackManagementSystem.Models;
 using CardZoneCashbackManagementSystem.Repositories.Abstractions;
 using CardZoneCashbackManagementSystem.Services.Abstractions;
@@ -52,6 +53,12 @@ public class TransactionService : ITransactionService
             return;
         }
 
+        if (transaction.Type == TransactionTypes.Debit && transaction.Amount > card.Balance)
+        {
+            throw new OverpaymentException(
+                $"Debit transaction amount {transaction.Amount} is more than card {card.Id} balance {card.Balance}");
+        }
+
         var changedAmount = transaction.Type == TransactionTypes.Credit ? transaction.Amount : -transaction.Amount;
         card.Balance += changedAmount;
 
@@ -70,6 +77,7 @@ public class TransactionService : ITransactionService
         }
 
         if (shouldCreditAccount)
+        {
             await AddTransactionAsync(new Transaction
             {
                 Amount = cashbackAmount.Value,
@@ -78,6 +86,7 @@ public class TransactionService : ITransactionService
                 HasCashback = false,
                 Type = TransactionTypes.Credit
             });
+        }
 
         return cashbackAmount;
     }

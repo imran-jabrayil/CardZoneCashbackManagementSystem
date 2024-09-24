@@ -1,4 +1,0 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=79c8118a_002D1bef_002D4f18_002D85a2_002D51733b8af55d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetCardsAsync_WhenCalled_CardsReturned" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Project Location="/Users/c.imran2001/RiderProjects/CardZoneCashbackManagementSystem/CardZoneCashbackManagementSystem.UnitTests" Presentation="&amp;lt;CardZoneCashbackManagementSystem.UnitTests&amp;gt;" /&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

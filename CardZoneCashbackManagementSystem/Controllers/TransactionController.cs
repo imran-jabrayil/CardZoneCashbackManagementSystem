@@ -1,4 +1,5 @@
 using AutoMapper;
+using CardZoneCashbackManagementSystem.Exceptions;
 using CardZoneCashbackManagementSystem.Models;
 using CardZoneCashbackManagementSystem.Models.Requests;
 using CardZoneCashbackManagementSystem.Models.Validators;
@@ -46,7 +47,16 @@ public class TransactionController : ControllerBase
         var transaction = _mapper.Map<Transaction>(request);
         transaction.CardId = cardId;
 
-        await _transactionService.AddTransactionAsync(transaction);
+        try
+        {
+            await _transactionService.AddTransactionAsync(transaction);
+        }
+        catch (OverpaymentException ex)
+        {
+            _logger.LogError("invalid request: {ErrorMessage}", ex.Message);
+            return UnprocessableEntity("Balance is not enough");
+        }
+        
         _logger.LogInformation("transaction added with id {Id}", transaction.Id);
         return Ok();
     }
