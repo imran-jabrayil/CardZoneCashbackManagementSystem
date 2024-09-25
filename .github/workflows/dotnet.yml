@@ -23,7 +23,7 @@ jobs:
     - name: Get version from csproj
       id: get_version
       run: |
-        VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" YourProject.csproj)
+        VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" CardZoneCashbackManagementSystem.csproj)
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
     - name: Restore dependencies
       run: dotnet restore
