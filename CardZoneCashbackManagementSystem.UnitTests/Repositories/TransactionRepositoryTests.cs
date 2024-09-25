@@ -22,8 +22,7 @@ public class TransactionRepositoryTests
     }
 
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task GetTransactionsAsync_ReturnsAllTransactions(List<Transaction> transactions)
     {
         // Arrange
@@ -39,8 +38,7 @@ public class TransactionRepositoryTests
         result.Should().HaveCount(transactions.Count);
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task GetTransactionsAsync_WithValidFromDate_ReturnsTransactions(List<Transaction> transactions)
     {
         // Arrange
@@ -57,8 +55,7 @@ public class TransactionRepositoryTests
         result.Should().HaveCount(1);
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task GetTransactionsAsync_WithValidFromAndToDate_ReturnsTransactions(List<Transaction> transactions)
     {
         // Arrange
@@ -76,8 +73,7 @@ public class TransactionRepositoryTests
         result.Should().HaveCount(1);
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task GetTransactionByIdAsync_WhenTransactionExists_ReturnsCard(Transaction transaction)
     {
         // Arrange
@@ -94,8 +90,7 @@ public class TransactionRepositoryTests
         result!.Id.Should().Be(transaction.Id);
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task AddTransactionAsync_AddsTransaction(Transaction transaction)
     {
         // Arrange
@@ -114,8 +109,7 @@ public class TransactionRepositoryTests
         savedTransaction.Type.Should().Be(transaction.Type);
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task DeleteTransactionByIdAsync_WhenTransactionExists_DeletesCard(Transaction transaction)
     {
         // Arrange
@@ -134,8 +128,7 @@ public class TransactionRepositoryTests
         deletedTransaction.Should().BeNull();
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task DeleteTransactionByIdAsync_WhenTransactionDoesNotExist_ReturnsFalse(long id)
     {
         // Arrange

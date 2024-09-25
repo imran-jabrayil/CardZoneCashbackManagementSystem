@@ -4,6 +4,6 @@ namespace CardZoneCashbackManagementSystem.Services.Abstractions;
 
 public interface IJobStateService
 {
-    Task<JobState?> GetJobState(string jobName);
-    Task UpdateJobState(string jobName, DateTime lastExecutionDay);
+    Task<JobState?> GetJobStateAsync(string jobName);
+    Task UpdateJobStateAsync(string jobName, DateTime lastExecutionDay);
 }

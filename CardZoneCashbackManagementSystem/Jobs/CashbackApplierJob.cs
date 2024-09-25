@@ -26,13 +26,13 @@ public class CashbackApplierJob : IJob
         var sw = Stopwatch.StartNew();
         _logger.LogInformation("started execution");
 
-        var jobState = await _jobStateService.GetJobState(nameof(CashbackApplierJob));
+        var jobState = await _jobStateService.GetJobStateAsync(nameof(CashbackApplierJob));
         var today = DateTime.Today;
         var startDay = jobState?.LastExecutionDay.AddDays(1) ?? today;
 
-        for (var day = startDay; day <= today; day = day.AddDays(1)) await processTransactions(day);
+        for (var day = startDay; day <= today; day = day.AddDays(1)) await this.processTransactions(day);
 
-        await _jobStateService.UpdateJobState(nameof(CashbackApplierJob), today);
+        await _jobStateService.UpdateJobStateAsync(nameof(CashbackApplierJob), today);
 
         sw.Stop();
         _logger.LogInformation("Finished execution. Elapsed ms: {ElapsedMs}", sw.Elapsed.TotalMilliseconds);

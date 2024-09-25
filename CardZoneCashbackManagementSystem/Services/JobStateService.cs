@@ -13,14 +13,14 @@ public class JobStateService : IJobStateService
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
     }
 
-    public async Task<JobState?> GetJobState(string jobName)
+    public async Task<JobState?> GetJobStateAsync(string jobName)
     {
-        return await _unitOfWork.JobStateRepository.GetJobState(jobName);
+        return await _unitOfWork.JobStateRepository.GetJobStateAsync(jobName);
     }
 
-    public async Task UpdateJobState(string jobName, DateTime lastExecutionDay)
+    public async Task UpdateJobStateAsync(string jobName, DateTime lastExecutionDay)
     {
-        await _unitOfWork.JobStateRepository.UpdateJobState(jobName, lastExecutionDay);
+        await _unitOfWork.JobStateRepository.UpdateJobStateAsync(jobName, lastExecutionDay);
         await _unitOfWork.SaveAsync();
     }
 }

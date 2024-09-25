@@ -11,8 +11,7 @@ namespace CardZoneCashbackManagementSystem.UnitTests.Services;
 
 public class TransactionServiceTests
 {
-    [Theory]
-    [InlineAutoData]
+    [Theory, InlineAutoData]
     public async Task GetTransactionsAsync_WhenCalled_TransactionsReturned(
         ICollection<Transaction> transactions,
         Mock<ILogger<TransactionService>> logger,
@@ -38,8 +37,7 @@ public class TransactionServiceTests
         actualTransactions.Should().BeEquivalentTo(transactions);
     }
 
-    [Theory]
-    [InlineAutoData]
+    [Theory, InlineAutoData]
     public async Task GetTransactionByIdAsync_WhenCalled_IdExists_TransactionReturned(
         Transaction transaction,
         Mock<ILogger<TransactionService>> logger,
@@ -66,8 +64,7 @@ public class TransactionServiceTests
             .And.BeEquivalentTo(transaction);
     }
 
-    [Theory]
-    [InlineAutoData]
+    [Theory, InlineAutoData]
     public async Task AddTransactionAsync_WhenCalled_NothingReturned(
         Transaction transaction,
         Card card,
@@ -99,8 +96,7 @@ public class TransactionServiceTests
         unitOfWork.Verify(uow => uow.CardRepository, Times.Once());
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task GetTransactionsAsync_WithValidFromDate_ReturnsFilteredTransactions(
         List<Transaction> transactions,
         Mock<ILogger<TransactionService>> logger,
@@ -131,8 +127,7 @@ public class TransactionServiceTests
         unitOfWork.Verify(uow => uow.TransactionRepository, Times.Once());
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task GetTransactionsAsync_WithValidFromAndToDate_ReturnsFilteredTransactions(
         List<Transaction> transactions,
         Mock<ILogger<TransactionService>> logger,
