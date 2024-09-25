@@ -33,7 +33,7 @@ public class TransactionController : ControllerBase
 
     [HttpPost]
     [Route("cards/{cardId}/transactions")]
-    public async Task<IActionResult> AddTransaction(long cardId, [FromBody] CreateTransactionRequest request)
+    public async Task<IActionResult> AddTransaction([FromRoute] long cardId, [FromBody] CreateTransactionRequest request)
     {
         var validationResult = await _createTransactionRequestValidator.ValidateAsync(request);
 

@@ -42,7 +42,7 @@ public class CardController : ControllerBase
 
     [HttpGet]
     [Route("cards/{id}")]
-    public async Task<IActionResult> GetCards(long id)
+    public async Task<IActionResult> GetCards([FromRoute] long id)
     {
         var card = await _cardService.GetCardByIdAsync(id);
 
@@ -78,7 +78,7 @@ public class CardController : ControllerBase
 
     [HttpDelete]
     [Route("cards/{id}")]
-    public async Task<IActionResult> DeleteCard(long id)
+    public async Task<IActionResult> DeleteCard([FromRoute] long id)
     {
         var result = await _cardService.DeleteCardByIdAsync(id);
 
