@@ -20,9 +20,16 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+    - name: Get version from csproj
+      id: get_version
+      run: |
+        VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" CardZoneCashbackManagementSystem/CardZoneCashbackManagementSystem.csproj)
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Output version
+      run: echo "Project version is $VERSION"
