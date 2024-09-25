@@ -18,12 +18,12 @@ public class JobStateRepository : IJobStateRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<JobState?> GetJobState(string jobName)
+    public async Task<JobState?> GetJobStateAsync(string jobName)
     {
         return await _dbContext.JobStates.FirstOrDefaultAsync(js => js.JobName == jobName);
     }
 
-    public async Task UpdateJobState(string jobName, DateTime lastExecutionDay)
+    public async Task UpdateJobStateAsync(string jobName, DateTime lastExecutionTime)
     {
         var jobState = await _dbContext.JobStates.FirstOrDefaultAsync(js => js.JobName == jobName);
 
@@ -33,6 +33,6 @@ public class JobStateRepository : IJobStateRepository
             return;
         }
 
-        jobState.LastExecutionDay = lastExecutionDay;
+        jobState.LastExecutionDay = lastExecutionTime.Date;
     }
 }

@@ -22,8 +22,7 @@ public class CardRepositoryTests
     }
 
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task GetCardsAsync_ReturnsAllCards(List<Card> cards)
     {
         // Arrange
@@ -39,8 +38,7 @@ public class CardRepositoryTests
         result.Should().HaveCount(cards.Count);
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task GetCardByIdAsync_WhenCardExists_ReturnsCard(Card card)
     {
         // Arrange
@@ -57,8 +55,7 @@ public class CardRepositoryTests
         result!.Id.Should().Be(card.Id);
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task AddCardAsync_AddsCard(Card card)
     {
         // Arrange
@@ -75,8 +72,7 @@ public class CardRepositoryTests
         savedCard.CustomerId.Should().Be(card.CustomerId);
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task DeleteCardByIdAsync_WhenCardExists_DeletesCard(Card card)
     {
         // Arrange
@@ -95,8 +91,7 @@ public class CardRepositoryTests
         deletedCard.Should().BeNull();
     }
 
-    [Theory]
-    [AutoData]
+    [Theory, InlineAutoData]
     public async Task DeleteCardByIdAsync_WhenCardDoesNotExist_ReturnsFalse(long id)
     {
         // Arrange
